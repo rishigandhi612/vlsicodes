@@ -1,0 +1,48 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC ARITH.ALL;
+use IEEE.STD LOGIC _UNSIGNED.ALL;
+entity main_Src is
+Port (clk : in STD_LOGIC;
+	rst: in STD_LOGIC;
+	en : in STD LOGIC;
+	datain: in STD_LOGIC_VECTOR (3 downto 0);
+	dataout : out STD _LOGIC_VECTOR (3 downto 0);
+	W: in STD_LOGIC;
+	red: out STD_LOGIC);
+end main src;
+
+architecture Behavioral of main_src is
+SIGNAL wptr, rptr: STD _LOGIC_VECTOR(3 downto O);
+TYPE FIFO is ARRAY(15 downto 0) of STD _LOGIC_VECTOR(3 downto 0);
+SIGNAL mem: FIFO;
+begin
+process (clk, rst)
+	begin
+	if rst = '1' then
+	wptr <= "0000";
+	rptr ≤= "0000";
+	red <= '0';
+elsif(clk'event and clk = '1') then
+if (en = '1') then
+	if(w='1') then -- write operation 
+	if (wptr < "1111") then
+	mem (CONV_INTEGER(wptr)) <= datain;
+	wptr <= wptr + 1;
+	else
+		red <='l'; -- memory full warning
+	end if;
+else
+if(rptr < wptr) then -- read operation 
+	red <= 0;
+	dataout <= mem(CONV_INTEGER (rptr));
+	rptr <= rptr + 1;
+else
+	red <='l'; - Empty memory warning
+	dataout <= "0000";
+end if;
+end if;
+end if;
+end if;
+end process;
+end Behavioral;
